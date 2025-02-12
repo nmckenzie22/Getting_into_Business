@@ -1,0 +1,24 @@
+---
+title: "README"
+output: html_document
+date: "2025-02-12"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Define the download URL
+kaggle_url <- "https://www.kaggle.com/api/v1/datasets/download/fratzcan/usa-house-prices"
+
+# Define the output file path
+output_file <- file.path("~/Downloads", "usa-house-prices.zip")
+
+# Run the cURL command in R
+system(paste("curl -L -o", shQuote(output_file), shQuote(kaggle_url)))
+
+# Optional: Unzip the file
+unzip(output_file, exdir = "~/Downloads/usa-house-prices")
+
+# Confirm download
+list.files("~/Downloads/usa-house-prices")
