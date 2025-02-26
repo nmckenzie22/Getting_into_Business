@@ -28,8 +28,71 @@ list.files("~/Downloads/usa-house-prices")
 
 When was the data acquired?
 Where was the data acquired?
+
 How was the data acquired?
+
 What are the attributes of this dataset?
+Below is R script code that loads the USA Housing Dataset and creates a data dictionary table based on the descriptions provided on Kaggle.
+```{r}
+install.packages("readr")   # For reading CSV files
+install.packages("dplyr")   # For data manipulation
+install.packages("knitr")   # For creating a table
+install.packages("kableExtra") # For formatting tables
+
+library(readr)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Load the dataset (update the path if needed)
+dataset <- read_csv("~/Downloads/USA_Housing_Dataset.csv")
+
+# View first few rows
+head(dataset)
+
+# Define the updated data dictionary with correct types and levels of measurement
+data_dictionary <- tibble::tibble(
+  Variable = c("Price", "Bedrooms", "Bathrooms", "Sqft Living", "Sqft Lot", 
+               "Floors", "Waterfront", "View", "Condition", "Sqft Above", 
+               "Sqft Basement", "Yr Built", "Yr Renovated", "Street", 
+               "City", "StateZip", "Country", 
+               "Median Area Income", "Median Area House Age", 
+               "Median Area Number of Rooms", "Median Area Number of Bedrooms", "Area Population"),
+  Type = c("Ratio", "Ratio", "Ratio", "Ratio", "Ratio", 
+           "Ratio", "Nominal", "Ordinal", "Ordinal", "Ratio", 
+           "Ratio", "Interval", "Interval", "Nominal", 
+           "Nominal", "Nominal", "Nominal", 
+           "Ratio", "Ratio", 
+           "Ratio", "Ratio", "Ratio"),
+  Description = c("Sale price of the house (in USD).",
+                  "Number of bedrooms in the house.",
+                  "Number of bathrooms in the house.",
+                  "Total living area in square feet.",
+                  "Total lot size in square feet.",
+                  "Number of floors in the house.",
+                  "Indicates if the house is on the waterfront (Yes/No).",
+                  "A rating of the house's view quality.",
+                  "Condition of the house (1-5 scale, where 5 is the best).",
+                  "Square footage of the house above ground.",
+                  "Square footage of the basement.",
+                  "Year the house was built.",
+                  "Year the house was last renovated.",
+                  "Street address of the house.",
+                  "City where the house is located.",
+                  "State and ZIP code of the house.",
+                  "Country where the house is located.",
+                  "Median income of residents in the area (in USD).",
+                  "Median age of houses in the area.",
+                  "Median number of rooms in houses in the area.",
+                  "Median number of bedrooms in houses in the area.",
+                  "Population of the area.")
+)
+
+# Print the data dictionary as a formatted table
+data_dictionary %>%
+  kable("pipe") %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
 
 
 
