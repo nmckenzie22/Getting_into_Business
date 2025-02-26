@@ -26,10 +26,10 @@ unzip(output_file, exdir = "~/Downloads/usa-house-prices")
 list.files("~/Downloads/usa-house-prices")
 ```
 
-# When was the data acquired?
-# Where was the data acquired?
-# How was the data acquired?
-# What are the attributes of this dataset?
+When was the data acquired?
+Where was the data acquired?
+How was the data acquired?
+What are the attributes of this dataset?
 
 
 
