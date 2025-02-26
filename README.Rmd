@@ -1,7 +1,9 @@
 ---
 title: "README"
-output: html_document
-date: "2025-02-12"
+output: 
+  github_document:
+    pandoc_args: ["--wrap=none"]
+always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
@@ -14,13 +16,13 @@ knitr::opts_chunk$set(echo = TRUE)
 kaggle_url <- "https://www.kaggle.com/api/v1/datasets/download/fratzcan/usa-house-prices"
 
 # Define the output file path
-output_file <- file.path("~/Downloads", "usa-house-prices.zip")
+output_file <- file.path("./", "usa-house-prices.zip")
 
 # Run the cURL command in R
 system(paste("curl -L -o", shQuote(output_file), shQuote(kaggle_url)))
 
 # Optional: Unzip the file
-unzip(output_file, exdir = "~/Downloads/usa-house-prices")
+unzip(output_file, exdir = "./usa-house-prices")
 
 # Confirm download
 list.files("~/Downloads/usa-house-prices")
@@ -34,10 +36,10 @@ How was the data acquired?
 What are the attributes of this dataset?
 Below is R script code that loads the USA Housing Dataset and creates a data dictionary table based on the descriptions provided on Kaggle.
 ```{r}
-install.packages("readr")   # For reading CSV files
-install.packages("dplyr")   # For data manipulation
-install.packages("knitr")   # For creating a table
-install.packages("kableExtra") # For formatting tables
+#install.packages("readr")   # For reading CSV files
+#install.packages("dplyr")   # For data manipulation
+#install.packages("knitr")   # For creating a table
+#install.packages("kableExtra") # For formatting tables
 
 
 library(readr)
@@ -95,15 +97,16 @@ data_dictionary %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
-Now we can take a further look at the data to gain initial insights and have an overview of the statistics. We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset.
+Now we can take a further look at the data to gain initial insights and have an overview of the statistics. 
+We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset.
 
 ```{r}
 # Install required packages (if not already installed)
-install.packages("readr")      # For reading CSV files
-install.packages("dplyr")      # For data manipulation
-install.packages("ggplot2")    # For visualizations
-install.packages("skimr")      # For detailed summary statistics
-install.packages("modeest")    # For calculating mode
+#install.packages("readr")      # For reading CSV files
+#install.packages("dplyr")      # For data manipulation
+#install.packages("ggplot2")    # For visualizations
+#install.packages("skimr")      # For detailed summary statistics
+#install.packages("modeest")    # For calculating mode
 # Load libraries
 library(readr)
 library(dplyr)
@@ -130,6 +133,15 @@ numeric_cols <- dataset %>% select(where(is.numeric))
 mode_values <- sapply(numeric_cols, get_mode)
 # Print mode values
 print(mode_values)
+```
+
+Next we need to identify any missing or empty values. The code below will allow us to identify the values. 
+
+```{r}
+# Check for missing values (NA counts per column)
+missing_values <- colSums(is.na(dataset))
+# Print missing values summary
+print(missing_values)
 ```
 
 
