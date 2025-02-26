@@ -39,6 +39,7 @@ install.packages("dplyr")   # For data manipulation
 install.packages("knitr")   # For creating a table
 install.packages("kableExtra") # For formatting tables
 
+
 library(readr)
 library(dplyr)
 library(knitr)
@@ -92,6 +93,43 @@ data_dictionary <- tibble::tibble(
 data_dictionary %>%
   kable("pipe") %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+Now we can take a further look at the data to gain initial insights and have an overview of the statistics. We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset.
+
+```{r}
+# Install required packages (if not already installed)
+install.packages("readr")      # For reading CSV files
+install.packages("dplyr")      # For data manipulation
+install.packages("ggplot2")    # For visualizations
+install.packages("skimr")      # For detailed summary statistics
+install.packages("modeest")    # For calculating mode
+# Load libraries
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(skimr)
+library(modeest)
+# Load the dataset (update the path if needed)
+dataset <- read_csv("~/Downloads/USA_Housing_Dataset.csv")
+# Display first few rows
+head(dataset)
+# Check structure of dataset
+str(dataset)
+# Basic summary statistics
+summary(dataset)
+# Additional summary statistics using skimr
+skim(dataset)
+# Function to calculate mode
+get_mode <- function(x) {
+  mfv <- mfv(x, na_rm = TRUE)  # Most frequent value
+  return(mfv)
+}
+# Calculate mode for numeric columns
+numeric_cols <- dataset %>% select(where(is.numeric))
+mode_values <- sapply(numeric_cols, get_mode)
+# Print mode values
+print(mode_values)
 ```
 
 
