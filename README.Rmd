@@ -98,7 +98,7 @@ data_dictionary %>%
 ```
 
 Now we can take a further look at the data to gain initial insights and have an overview of the statistics. 
-We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset.
+We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset. s
 
 ```{r}
 # Install required packages (if not already installed)
