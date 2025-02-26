@@ -9,8 +9,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Download Dataset
-
-hdsbfjksdkjf
 ```{r}
 # Define the download URL
 kaggle_url <- "https://www.kaggle.com/api/v1/datasets/download/fratzcan/usa-house-prices"
@@ -27,4 +25,11 @@ unzip(output_file, exdir = "~/Downloads/usa-house-prices")
 # Confirm download
 list.files("~/Downloads/usa-house-prices")
 ```
+
+# When was the data acquired?
+# Where was the data acquired?
+# How was the data acquired?
+# What are the attributes of this dataset?
+
+
 
