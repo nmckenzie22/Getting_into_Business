@@ -40,8 +40,8 @@ Below is R script code that loads the USA Housing Dataset and creates a data dic
 #install.packages("dplyr")   # For data manipulation
 #install.packages("knitr")   # For creating a table
 #install.packages("kableExtra") # For formatting tables
-
-
+#install.packages("scales") 
+library(scales)
 library(readr)
 library(dplyr)
 library(knitr)
@@ -49,10 +49,8 @@ library(kableExtra)
 
 # Load the dataset (update the path if needed)
 dataset <- read_csv("~/Downloads/USA_Housing_Dataset.csv")
-
 # View first few rows
 head(dataset)
-
 # Define the updated data dictionary with correct types and levels of measurement
 data_dictionary <- tibble::tibble(
   Variable = c("Price", "Bedrooms", "Bathrooms", "Sqft Living", "Sqft Lot", 
@@ -90,7 +88,6 @@ data_dictionary <- tibble::tibble(
                   "Median number of bedrooms in houses in the area.",
                   "Population of the area.")
 )
-
 # Print the data dictionary as a formatted table
 data_dictionary %>%
   kable("pipe") %>%
@@ -147,15 +144,38 @@ print(missing_values)
 Thankfully this dataset has no missing values in any of the variables as shown above. If there were any missing values or empty values, some strategies that we could do would be to fill in the missing values with the median for that variable and then conduct a sensitivity analysis. 
 
 ## Visualizations
-
 From the code below we will be able to see a histogram of the House Prices. 
 ```{r}
-ggplot(dataset, aes(x = `price`)) +  # Ensure correct column name
+ggplot(dataset, aes(x = `price`)) +
   geom_histogram(bins = 50, fill = "blue", color = "black", alpha = 0.7) +
-  labs(title = "Distribution of House Prices", x = "Price (USD)", y = "Count") +
+  scale_x_log10(labels = scales::comma) +  # Log scale with readable numbers
+  labs(title = "Distribution of House Prices (Log Scale)", 
+       x = "Price (USD, Log Scale)", y = "Count") +
   theme_minimal()
 ```
+As with most datasets we can see that there are outliers 
+Next we can look at a bar plot of the number of houses by the amount of the bedrooms they have.
 
+```{r}
+ggplot(dataset, aes(x = as.factor(`bedrooms`))) +
+  geom_bar(fill = "purple", alpha = 0.7) +
+  labs(title = "Number of Houses by Bedroom Count", x = "Number of Bedrooms", y = "Count") +
+  theme_minimal()
+
+```
+Analysis. Finally we can look at a scatter plot for the sale price of the house vs the total area of square foot living space. 
+
+```{r}
+ggplot(dataset, aes(x = `sqft_living`, y = `price`)) +
+  geom_point(alpha = 0.5, color = "blue") +
+  scale_x_continuous(labels = scales::comma) +  # Format x-axis
+  scale_y_continuous(labels = scales::comma) +  # Format y-axis
+  labs(title = "House Price vs. Living Area", 
+       x = "Living Area (sqft)", 
+       y = "Price (USD)") +
+  theme_minimal()
+```
+Analysis
 
 
 
