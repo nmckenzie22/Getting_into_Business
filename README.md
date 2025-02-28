@@ -22,6 +22,8 @@ list.files("~/Downloads/usa-house-prices")
 
     ## character(0)
 
+## Understanding the Data
+
 When was the data acquired? Where was the data acquired?
 
 How was the data acquired?
@@ -410,21 +412,28 @@ Population of the area.
 </tbody>
 </table>
 
+## Summary Statistics
+
 Now we can take a further look at the data to gain initial insights and have an overview of the statistics. We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset.
 
 ``` r
 # Install required packages (if not already installed)
-#install.packages("readr")      # For reading CSV files
-#install.packages("dplyr")      # For data manipulation
-#install.packages("ggplot2")    # For visualizations
-#install.packages("skimr")      # For detailed summary statistics
-#install.packages("modeest")    # For calculating mode
+#install.packages("readr")      
+#install.packages("dplyr")      
+#install.packages("ggplot2")    
+#install.packages("skimr")      
+#install.packages("modeest")    
+#install.packages("scales")  # For formatting large numbers
+#install.packages("knitr")
 # Load libraries
 library(readr)
 library(dplyr)
 library(ggplot2)
 library(skimr)
 library(modeest)
+library(scales)  # New package to format numbers
+library(knitr)
+
 # Load the dataset (update the path if needed)
 dataset <- read_csv("~/Downloads/USA_Housing_Dataset.csv")
 ```
@@ -438,24 +447,6 @@ dataset <- read_csv("~/Downloads/USA_Housing_Dataset.csv")
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
-# Display first few rows
-head(dataset)
-```
-
-    ## # A tibble: 6 × 18
-    ##   date                  price bedrooms bathrooms sqft_living sqft_lot floors
-    ##   <dttm>                <dbl>    <dbl>     <dbl>       <dbl>    <dbl>  <dbl>
-    ## 1 2014-05-09 00:00:00  376000        3      2           1340     1384      3
-    ## 2 2014-05-09 00:00:00  800000        4      3.25        3540   159430      2
-    ## 3 2014-05-09 00:00:00 2238888        5      6.5         7270   130017      2
-    ## 4 2014-05-09 00:00:00  324000        3      2.25         998      904      2
-    ## 5 2014-05-10 00:00:00  549900        5      2.75        3060     7015      1
-    ## 6 2014-05-10 00:00:00  320000        3      2.5         2130     6969      2
-    ## # ℹ 11 more variables: waterfront <dbl>, view <dbl>, condition <dbl>,
-    ## #   sqft_above <dbl>, sqft_basement <dbl>, yr_built <dbl>, yr_renovated <dbl>,
-    ## #   street <chr>, city <chr>, statezip <chr>, country <chr>
 
 ``` r
 # Check structure of dataset
@@ -505,150 +496,207 @@ str(dataset)
     ##  - attr(*, "problems")=<externalptr>
 
 ``` r
-# Basic summary statistics
-summary(dataset)
+# Basic summary statistics without scientific notation
+summary_stats <- summary(dataset)
+# Format numeric values to remove scientific notation
+formatted_summary <- as.data.frame(summary_stats) %>% mutate_all(~ format(., big.mark = ",", scientific = FALSE))
+
+# Print formatted summary statistics as a Markdown table
+kable(formatted_summary, caption = "Summary Statistics for Dataset", format = "markdown")
 ```
 
-    ##       date                            price             bedrooms  
-    ##  Min.   :2014-05-02 00:00:00.00   Min.   :       0   Min.   :0.0  
-    ##  1st Qu.:2014-05-27 00:00:00.00   1st Qu.:  320000   1st Qu.:3.0  
-    ##  Median :2014-06-12 00:00:00.00   Median :  460000   Median :3.0  
-    ##  Mean   :2014-06-10 16:24:41.74   Mean   :  553063   Mean   :3.4  
-    ##  3rd Qu.:2014-06-25 00:00:00.00   3rd Qu.:  659125   3rd Qu.:4.0  
-    ##  Max.   :2014-07-10 00:00:00.00   Max.   :26590000   Max.   :8.0  
-    ##    bathrooms      sqft_living       sqft_lot           floors     
-    ##  Min.   :0.000   Min.   :  370   Min.   :    638   Min.   :1.000  
-    ##  1st Qu.:1.750   1st Qu.: 1470   1st Qu.:   5000   1st Qu.:1.000  
-    ##  Median :2.250   Median : 1980   Median :   7676   Median :1.500  
-    ##  Mean   :2.163   Mean   : 2144   Mean   :  14698   Mean   :1.514  
-    ##  3rd Qu.:2.500   3rd Qu.: 2620   3rd Qu.:  11000   3rd Qu.:2.000  
-    ##  Max.   :6.750   Max.   :10040   Max.   :1074218   Max.   :3.500  
-    ##    waterfront            view          condition       sqft_above  
-    ##  Min.   :0.000000   Min.   :0.0000   Min.   :1.000   Min.   : 370  
-    ##  1st Qu.:0.000000   1st Qu.:0.0000   1st Qu.:3.000   1st Qu.:1190  
-    ##  Median :0.000000   Median :0.0000   Median :3.000   Median :1600  
-    ##  Mean   :0.007488   Mean   :0.2466   Mean   :3.452   Mean   :1831  
-    ##  3rd Qu.:0.000000   3rd Qu.:0.0000   3rd Qu.:4.000   3rd Qu.:2310  
-    ##  Max.   :1.000000   Max.   :4.0000   Max.   :5.000   Max.   :8020  
-    ##  sqft_basement       yr_built     yr_renovated       street         
-    ##  Min.   :   0.0   Min.   :1900   Min.   :   0.0   Length:4140       
-    ##  1st Qu.:   0.0   1st Qu.:1951   1st Qu.:   0.0   Class :character  
-    ##  Median :   0.0   Median :1976   Median :   0.0   Mode  :character  
-    ##  Mean   : 312.3   Mean   :1971   Mean   : 808.4                     
-    ##  3rd Qu.: 602.5   3rd Qu.:1997   3rd Qu.:1999.0                     
-    ##  Max.   :4820.0   Max.   :2014   Max.   :2014.0                     
-    ##      city             statezip           country         
-    ##  Length:4140        Length:4140        Length:4140       
-    ##  Class :character   Class :character   Class :character  
-    ##  Mode  :character   Mode  :character   Mode  :character  
-    ##                                                          
-    ##                                                          
-    ## 
+| Var1 | Var2          | Freq                           |
+|:-----|:--------------|:-------------------------------|
+|      | date          | Min. :2014-05-02 00:00:00.00   |
+|      | date          | 1st Qu.:2014-05-27 00:00:00.00 |
+|      | date          | Median :2014-06-12 00:00:00.00 |
+|      | date          | Mean :2014-06-10 16:24:41.74   |
+|      | date          | 3rd Qu.:2014-06-25 00:00:00.00 |
+|      | date          | Max. :2014-07-10 00:00:00.00   |
+|      | price         | Min. : 0                       |
+|      | price         | 1st Qu.: 320000                |
+|      | price         | Median : 460000                |
+|      | price         | Mean : 553063                  |
+|      | price         | 3rd Qu.: 659125                |
+|      | price         | Max. :26590000                 |
+|      | bedrooms      | Min. :0.0                      |
+|      | bedrooms      | 1st Qu.:3.0                    |
+|      | bedrooms      | Median :3.0                    |
+|      | bedrooms      | Mean :3.4                      |
+|      | bedrooms      | 3rd Qu.:4.0                    |
+|      | bedrooms      | Max. :8.0                      |
+|      | bathrooms     | Min. :0.000                    |
+|      | bathrooms     | 1st Qu.:1.750                  |
+|      | bathrooms     | Median :2.250                  |
+|      | bathrooms     | Mean :2.163                    |
+|      | bathrooms     | 3rd Qu.:2.500                  |
+|      | bathrooms     | Max. :6.750                    |
+|      | sqft_living   | Min. : 370                     |
+|      | sqft_living   | 1st Qu.: 1470                  |
+|      | sqft_living   | Median : 1980                  |
+|      | sqft_living   | Mean : 2144                    |
+|      | sqft_living   | 3rd Qu.: 2620                  |
+|      | sqft_living   | Max. :10040                    |
+|      | sqft_lot      | Min. : 638                     |
+|      | sqft_lot      | 1st Qu.: 5000                  |
+|      | sqft_lot      | Median : 7676                  |
+|      | sqft_lot      | Mean : 14698                   |
+|      | sqft_lot      | 3rd Qu.: 11000                 |
+|      | sqft_lot      | Max. :1074218                  |
+|      | floors        | Min. :1.000                    |
+|      | floors        | 1st Qu.:1.000                  |
+|      | floors        | Median :1.500                  |
+|      | floors        | Mean :1.514                    |
+|      | floors        | 3rd Qu.:2.000                  |
+|      | floors        | Max. :3.500                    |
+|      | waterfront    | Min. :0.000000                 |
+|      | waterfront    | 1st Qu.:0.000000               |
+|      | waterfront    | Median :0.000000               |
+|      | waterfront    | Mean :0.007488                 |
+|      | waterfront    | 3rd Qu.:0.000000               |
+|      | waterfront    | Max. :1.000000                 |
+|      | view          | Min. :0.0000                   |
+|      | view          | 1st Qu.:0.0000                 |
+|      | view          | Median :0.0000                 |
+|      | view          | Mean :0.2466                   |
+|      | view          | 3rd Qu.:0.0000                 |
+|      | view          | Max. :4.0000                   |
+|      | condition     | Min. :1.000                    |
+|      | condition     | 1st Qu.:3.000                  |
+|      | condition     | Median :3.000                  |
+|      | condition     | Mean :3.452                    |
+|      | condition     | 3rd Qu.:4.000                  |
+|      | condition     | Max. :5.000                    |
+|      | sqft_above    | Min. : 370                     |
+|      | sqft_above    | 1st Qu.:1190                   |
+|      | sqft_above    | Median :1600                   |
+|      | sqft_above    | Mean :1831                     |
+|      | sqft_above    | 3rd Qu.:2310                   |
+|      | sqft_above    | Max. :8020                     |
+|      | sqft_basement | Min. : 0.0                     |
+|      | sqft_basement | 1st Qu.: 0.0                   |
+|      | sqft_basement | Median : 0.0                   |
+|      | sqft_basement | Mean : 312.3                   |
+|      | sqft_basement | 3rd Qu.: 602.5                 |
+|      | sqft_basement | Max. :4820.0                   |
+|      | yr_built      | Min. :1900                     |
+|      | yr_built      | 1st Qu.:1951                   |
+|      | yr_built      | Median :1976                   |
+|      | yr_built      | Mean :1971                     |
+|      | yr_built      | 3rd Qu.:1997                   |
+|      | yr_built      | Max. :2014                     |
+|      | yr_renovated  | Min. : 0.0                     |
+|      | yr_renovated  | 1st Qu.: 0.0                   |
+|      | yr_renovated  | Median : 0.0                   |
+|      | yr_renovated  | Mean : 808.4                   |
+|      | yr_renovated  | 3rd Qu.:1999.0                 |
+|      | yr_renovated  | Max. :2014.0                   |
+|      | street        | Length:4140                    |
+|      | street        | Class :character               |
+|      | street        | Mode :character                |
+|      | street        | NA                             |
+|      | street        | NA                             |
+|      | street        | NA                             |
+|      | city          | Length:4140                    |
+|      | city          | Class :character               |
+|      | city          | Mode :character                |
+|      | city          | NA                             |
+|      | city          | NA                             |
+|      | city          | NA                             |
+|      | statezip      | Length:4140                    |
+|      | statezip      | Class :character               |
+|      | statezip      | Mode :character                |
+|      | statezip      | NA                             |
+|      | statezip      | NA                             |
+|      | statezip      | NA                             |
+|      | country       | Length:4140                    |
+|      | country       | Class :character               |
+|      | country       | Mode :character                |
+|      | country       | NA                             |
+|      | country       | NA                             |
+|      | country       | NA                             |
+
+Summary Statistics for Dataset
 
 ``` r
-# Additional summary statistics using skimr
-skim(dataset)
-```
+# Additional summary statistics using skimr (without scientific notation)
+skimmed_data <- skim(dataset)
 
-|                                                  |         |
-|:-------------------------------------------------|:--------|
-| Name                                             | dataset |
-| Number of rows                                   | 4140    |
-| Number of columns                                | 18      |
-| \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_   |         |
-| Column type frequency:                           |         |
-| character                                        | 4       |
-| numeric                                          | 13      |
-| POSIXct                                          | 1       |
-| \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ |         |
-| Group variables                                  | None    |
-
-Data summary
-
-**Variable type: character**
-
-| skim_variable | n_missing | complete_rate | min | max | empty | n_unique | whitespace |
-|:--------------|----------:|--------------:|----:|----:|------:|---------:|-----------:|
-| street        |         0 |             1 |   8 |  46 |     0 |     4079 |          0 |
-| city          |         0 |             1 |   4 |  18 |     0 |       43 |          0 |
-| statezip      |         0 |             1 |   8 |   8 |     0 |       77 |          0 |
-| country       |         0 |             1 |   3 |   3 |     0 |        1 |          0 |
-
-**Variable type: numeric**
-
-| skim_variable | n_missing | complete_rate | mean | sd | p0 | p25 | p50 | p75 | p100 | hist |
-|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---|
-| price | 0 | 1 | 553062.88 | 583686.45 | 0 | 320000.00 | 460000.00 | 659125.0 | 26590000.00 | ▇▁▁▁▁ |
-| bedrooms | 0 | 1 | 3.40 | 0.90 | 0 | 3.00 | 3.00 | 4.0 | 8.00 | ▁▇▅▁▁ |
-| bathrooms | 0 | 1 | 2.16 | 0.78 | 0 | 1.75 | 2.25 | 2.5 | 6.75 | ▂▇▂▁▁ |
-| sqft_living | 0 | 1 | 2143.64 | 957.48 | 370 | 1470.00 | 1980.00 | 2620.0 | 10040.00 | ▇▅▁▁▁ |
-| sqft_lot | 0 | 1 | 14697.64 | 35876.84 | 638 | 5000.00 | 7676.00 | 11000.0 | 1074218.00 | ▇▁▁▁▁ |
-| floors | 0 | 1 | 1.51 | 0.53 | 1 | 1.00 | 1.50 | 2.0 | 3.50 | ▇▆▁▁▁ |
-| waterfront | 0 | 1 | 0.01 | 0.09 | 0 | 0.00 | 0.00 | 0.0 | 1.00 | ▇▁▁▁▁ |
-| view | 0 | 1 | 0.25 | 0.79 | 0 | 0.00 | 0.00 | 0.0 | 4.00 | ▇▁▁▁▁ |
-| condition | 0 | 1 | 3.45 | 0.68 | 1 | 3.00 | 3.00 | 4.0 | 5.00 | ▁▁▇▃▁ |
-| sqft_above | 0 | 1 | 1831.35 | 861.38 | 370 | 1190.00 | 1600.00 | 2310.0 | 8020.00 | ▇▅▁▁▁ |
-| sqft_basement | 0 | 1 | 312.29 | 464.35 | 0 | 0.00 | 0.00 | 602.5 | 4820.00 | ▇▁▁▁▁ |
-| yr_built | 0 | 1 | 1970.81 | 29.81 | 1900 | 1951.00 | 1976.00 | 1997.0 | 2014.00 | ▂▃▆▆▇ |
-| yr_renovated | 0 | 1 | 808.37 | 979.38 | 0 | 0.00 | 0.00 | 1999.0 | 2014.00 | ▇▁▁▁▆ |
-
-**Variable type: POSIXct**
-
-| skim_variable | n_missing | complete_rate | min | max | median | n_unique |
-|:---|---:|---:|:---|:---|:---|---:|
-| date | 0 | 1 | 2014-05-02 | 2014-07-10 | 2014-06-12 | 68 |
-
-``` r
-# Function to calculate mode
-get_mode <- function(x) {
-  mfv <- mfv(x, na_rm = TRUE)  # Most frequent value
-  return(mfv)
+# Function to remove scientific notation in skimr output
+format_skim <- function(x) {
+  if (is.numeric(x)) {
+    return(format(x, big.mark = ",", scientific = FALSE))
+  } else {
+    return(x)
+  }
 }
-# Calculate mode for numeric columns
-numeric_cols <- dataset %>% select(where(is.numeric))
-mode_values <- sapply(numeric_cols, get_mode)
-# Print mode values
-print(mode_values)
+
+# Apply formatting
+skimmed_data <- skimmed_data %>%
+  mutate(across(where(is.numeric), format_skim))
+
+# Print formatted skimmed statistics as a Markdown table
+kable(skimmed_data, caption = "Skim Summary Statistics for Dataset", format = "markdown")
 ```
 
-    ## $price
-    ## [1] 0
-    ## 
-    ## $bedrooms
-    ## [1] 3
-    ## 
-    ## $bathrooms
-    ## [1] 2.5
-    ## 
-    ## $sqft_living
-    ## [1] 1720
-    ## 
-    ## $sqft_lot
-    ## [1] 5000
-    ## 
-    ## $floors
-    ## [1] 1
-    ## 
-    ## $waterfront
-    ## [1] 0
-    ## 
-    ## $view
-    ## [1] 0
-    ## 
-    ## $condition
-    ## [1] 3
-    ## 
-    ## $sqft_above
-    ## [1] 1200
-    ## 
-    ## $sqft_basement
-    ## [1] 0
-    ## 
-    ## $yr_built
-    ## [1] 2005 2006
-    ## 
-    ## $yr_renovated
-    ## [1] 0
+| skim_type | skim_variable | n_missing | complete_rate | POSIXct.min | POSIXct.max | POSIXct.median | POSIXct.n_unique | character.min | character.max | character.empty | character.n_unique | character.whitespace | numeric.mean | numeric.sd | numeric.p0 | numeric.p25 | numeric.p50 | numeric.p75 | numeric.p100 | numeric.hist |
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+| POSIXct | date | 0 | 1 | 2014-05-02 | 2014-07-10 | 2014-06-12 | 68 | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA |
+| character | street | 0 | 1 | NA | NA | NA | NA | 8 | 46 | 0 | 4,079 | 0 | NA | NA | NA | NA | NA | NA | NA | NA |
+| character | city | 0 | 1 | NA | NA | NA | NA | 4 | 18 | 0 | 43 | 0 | NA | NA | NA | NA | NA | NA | NA | NA |
+| character | statezip | 0 | 1 | NA | NA | NA | NA | 8 | 8 | 0 | 77 | 0 | NA | NA | NA | NA | NA | NA | NA | NA |
+| character | country | 0 | 1 | NA | NA | NA | NA | 3 | 3 | 0 | 1 | 0 | NA | NA | NA | NA | NA | NA | NA | NA |
+| numeric | price | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 553,062.877289078 | 583,686.45224462 | 0 | 320,000.00 | 460,000.00 | 659,125.0 | 26,590,000.00 | ▇▁▁▁▁ |
+| numeric | bedrooms | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 3.400483092 | 0.90393880 | 0 | 3.00 | 3.00 | 4.0 | 8.00 | ▁▇▅▁▁ |
+| numeric | bathrooms | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 2.163043478 | 0.78473302 | 0 | 1.75 | 2.25 | 2.5 | 6.75 | ▂▇▂▁▁ |
+| numeric | sqft_living | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 2,143.638888889 | 957.48162104 | 370 | 1,470.00 | 1,980.00 | 2,620.0 | 10,040.00 | ▇▅▁▁▁ |
+| numeric | sqft_lot | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 14,697.638164251 | 35,876.83812300 | 638 | 5,000.00 | 7,676.00 | 11,000.0 | 1,074,218.00 | ▇▁▁▁▁ |
+| numeric | floors | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 1.514130435 | 0.53494086 | 1 | 1.00 | 1.50 | 2.0 | 3.50 | ▇▆▁▁▁ |
+| numeric | waterfront | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 0.007487923 | 0.08621861 | 0 | 0.00 | 0.00 | 0.0 | 1.00 | ▇▁▁▁▁ |
+| numeric | view | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 0.246618357 | 0.79061948 | 0 | 0.00 | 0.00 | 0.0 | 4.00 | ▇▁▁▁▁ |
+| numeric | condition | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 3.452415459 | 0.67853320 | 1 | 3.00 | 3.00 | 4.0 | 5.00 | ▁▁▇▃▁ |
+| numeric | sqft_above | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 1,831.351449275 | 861.38294690 | 370 | 1,190.00 | 1,600.00 | 2,310.0 | 8,020.00 | ▇▅▁▁▁ |
+| numeric | sqft_basement | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 312.287439614 | 464.34922155 | 0 | 0.00 | 0.00 | 602.5 | 4,820.00 | ▇▁▁▁▁ |
+| numeric | yr_built | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 1,970.814009662 | 29.80794118 | 1,900 | 1,951.00 | 1,976.00 | 1,997.0 | 2,014.00 | ▂▃▆▆▇ |
+| numeric | yr_renovated | 0 | 1 | NA | NA | NA | NA | NA | NA | NA | NA | NA | 808.368357488 | 979.38053545 | 0 | 0.00 | 0.00 | 1,999.0 | 2,014.00 | ▇▁▁▁▆ |
+
+Skim Summary Statistics for Dataset
+
+``` r
+# Function to calculate median
+get_median <- function(x) {
+  median_value <- median(x, na.rm = TRUE)  # Calculate median, ignoring NAs
+  return(median_value)
+}
+
+# Calculate median for numeric columns
+numeric_cols <- dataset %>% select(where(is.numeric))
+median_values <- sapply(numeric_cols, get_median)
+
+# Format median values without scientific notation
+median_values <- format(median_values, big.mark = ",", scientific = FALSE)
+
+# Print formatted median values as a Markdown table
+kable(as.data.frame(median_values), caption = "Median Values for Numeric Columns", format = "markdown")
+```
+
+|               | median_values |
+|:--------------|:--------------|
+| price         | 460,000.00    |
+| bedrooms      | 3.00          |
+| bathrooms     | 2.25          |
+| sqft_living   | 1,980.00      |
+| sqft_lot      | 7,676.00      |
+| floors        | 1.50          |
+| waterfront    | 0.00          |
+| view          | 0.00          |
+| condition     | 3.00          |
+| sqft_above    | 1,600.00      |
+| sqft_basement | 0.00          |
+| yr_built      | 1,976.00      |
+| yr_renovated  | 0.00          |
+
+Median Values for Numeric Columns
 
 ## Missing Values
 
@@ -691,7 +739,11 @@ ggplot(dataset, aes(x = `price`)) +
     ## Warning: Removed 49 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- --> As with most datasets we can see that there are outliers Next we can look at a bar plot of the number of houses by the amount of the bedrooms they have.
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+As with most datasets we can see that there are a number of outliers. The histogram shows house prices on a log scale, which helps spread out data that is skewed to higher values. Houses with very high prices (luxury homes) appear as bars towards the far-right end. After looking back through the dataset, the houses with extremely high prices are valid data points (very luxury properties) and are not a result from data entry errors.
+
+Next we can look at a bar plot of the number of houses by the amount of the bedrooms they have.
 
 ``` r
 ggplot(dataset, aes(x = as.factor(`bedrooms`))) +
@@ -700,7 +752,9 @@ ggplot(dataset, aes(x = as.factor(`bedrooms`))) +
   theme_minimal()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> Analysis. Finally we can look at a scatter plot for the sale price of the house vs the total area of square foot living space.
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> The results of this bar plot align with the results we saw previously in the histogram. As just from visual inspection we can see that the number of bedrooms a property has will likely directly relate to its price. While there are other factors that play a part in the price of a property (such as location and square footage), it can be concluded that the number of bedrooms will have a significant impact. No outliers can be seen from this graph.
+
+Finally we can look at a scatter plot for the sale price of the house vs the total area of square foot living space.
 
 ``` r
 ggplot(dataset, aes(x = `sqft_living`, y = `price`)) +
@@ -713,4 +767,4 @@ ggplot(dataset, aes(x = `sqft_living`, y = `price`)) +
   theme_minimal()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> Analysis
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> The scatter plot mostly aligns with the trend seen across all graphs that as the number of bedrooms and the total living area increases, so does the houses price. There is two clear outliers that we can see from this graph however. These isolated points far from the cluster of most data indicate potential anomalies. Typically, these high-priced small homes are due to unique factors (e.g., location, luxury features). A NYC penthouse is going to be worth a lot more than a ranch in Jersey, even though it will be significantly smaller. There is no need to remove these cases as they do not skew statistical models.

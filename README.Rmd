@@ -28,6 +28,7 @@ unzip(output_file, exdir = "./usa-house-prices")
 list.files("~/Downloads/usa-house-prices")
 ```
 
+## Understanding the Data
 When was the data acquired?
 Where was the data acquired?
 
@@ -94,43 +95,65 @@ data_dictionary %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
-Now we can take a further look at the data to gain initial insights and have an overview of the statistics. 
-We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset.
+## Summary Statistics
+Now we can take a further look at the data to gain initial insights and have an overview of the statistics. We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset.
 
 ```{r}
 # Install required packages (if not already installed)
-#install.packages("readr")      # For reading CSV files
-#install.packages("dplyr")      # For data manipulation
-#install.packages("ggplot2")    # For visualizations
-#install.packages("skimr")      # For detailed summary statistics
-#install.packages("modeest")    # For calculating mode
+#install.packages("readr")      
+#install.packages("dplyr")      
+#install.packages("ggplot2")    
+#install.packages("skimr")      
+#install.packages("modeest")    
+#install.packages("scales")  # For formatting large numbers
+#install.packages("knitr")
 # Load libraries
 library(readr)
 library(dplyr)
 library(ggplot2)
 library(skimr)
 library(modeest)
+library(scales)  # New package to format numbers
+library(knitr)
 # Load the dataset (update the path if needed)
 dataset <- read_csv("~/Downloads/USA_Housing_Dataset.csv")
-# Display first few rows
-head(dataset)
 # Check structure of dataset
 str(dataset)
-# Basic summary statistics
-summary(dataset)
-# Additional summary statistics using skimr
-skim(dataset)
-# Function to calculate mode
-get_mode <- function(x) {
-  mfv <- mfv(x, na_rm = TRUE)  # Most frequent value
-  return(mfv)
+# Basic summary statistics without scientific notation
+summary_stats <- summary(dataset)
+# Format numeric values to remove scientific notation
+formatted_summary <- as.data.frame(summary_stats) %>% mutate_all(~ format(., big.mark = ",", scientific = FALSE))
+# Print formatted summary statistics as a Markdown table
+kable(formatted_summary, caption = "Summary Statistics for Dataset", format = "markdown")
+# Additional summary statistics using skimr (without scientific notation)
+skimmed_data <- skim(dataset)
+# Function to remove scientific notation in skimr output
+format_skim <- function(x) {
+  if (is.numeric(x)) {
+    return(format(x, big.mark = ",", scientific = FALSE))
+  } else {
+    return(x)
+  }
 }
-# Calculate mode for numeric columns
+# Apply formatting
+skimmed_data <- skimmed_data %>%
+  mutate(across(where(is.numeric), format_skim))
+# Print formatted skimmed statistics as a Markdown table
+kable(skimmed_data, caption = "Skim Summary Statistics for Dataset", format = "markdown")
+# Function to calculate median
+get_median <- function(x) {
+  median_value <- median(x, na.rm = TRUE)  # Calculate median, ignoring NAs
+  return(median_value)
+}
+# Calculate median for numeric columns
 numeric_cols <- dataset %>% select(where(is.numeric))
-mode_values <- sapply(numeric_cols, get_mode)
-# Print mode values
-print(mode_values)
+median_values <- sapply(numeric_cols, get_median)
+# Format median values without scientific notation
+median_values <- format(median_values, big.mark = ",", scientific = FALSE)
+# Print formatted median values as a Markdown table
+kable(as.data.frame(median_values), caption = "Median Values for Numeric Columns", format = "markdown")
 ```
+
 
 ## Missing Values
 Next we need to identify any missing or empty values. The code below will allow us to identify the values. 
@@ -153,8 +176,10 @@ ggplot(dataset, aes(x = `price`)) +
        x = "Price (USD, Log Scale)", y = "Count") +
   theme_minimal()
 ```
-As with most datasets we can see that there are outliers 
-Next we can look at a bar plot of the number of houses by the amount of the bedrooms they have.
+
+As with most datasets we can see that there are a number of outliers. The histogram shows house prices on a log scale, which helps spread out data that is skewed to higher values. Houses with very high prices (luxury homes) appear as bars towards the far-right end. After looking back through the dataset, the houses with extremely high prices are valid data points (very luxury properties) and are not a result from data entry errors.
+
+Next we can look at a bar plot of the number of houses by the amount of the bedrooms they have. 
 
 ```{r}
 ggplot(dataset, aes(x = as.factor(`bedrooms`))) +
@@ -163,7 +188,9 @@ ggplot(dataset, aes(x = as.factor(`bedrooms`))) +
   theme_minimal()
 
 ```
-Analysis. Finally we can look at a scatter plot for the sale price of the house vs the total area of square foot living space. 
+The results of this bar plot align with the results we saw previously in the histogram. As just from visual inspection we can see that the number of bedrooms a property has will likely directly relate to its price. While there are other factors that play a part in the price of a property (such as location and square footage), it can be concluded that the number of bedrooms will have a significant impact. No outliers can be seen from this graph. 
+
+Finally we can look at a scatter plot for the sale price of the house vs the total area of square foot living space. 
 
 ```{r}
 ggplot(dataset, aes(x = `sqft_living`, y = `price`)) +
@@ -175,7 +202,7 @@ ggplot(dataset, aes(x = `sqft_living`, y = `price`)) +
        y = "Price (USD)") +
   theme_minimal()
 ```
-Analysis
+The scatter plot mostly aligns with the trend seen across all graphs that as the number of bedrooms and the total living area increases, so does the houses price. There is two clear outliers that we can see from this graph however. These isolated points far from the cluster of most data indicate potential anomalies. Typically, these high-priced small homes are due to unique factors (e.g., location, luxury features). A NYC penthouse is going to be worth a lot more than a ranch in Jersey, even though it will be significantly smaller. There is no need to  remove these cases as they do not skew statistical models. 
 
 
 
