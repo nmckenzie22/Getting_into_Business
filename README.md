@@ -1,7 +1,7 @@
 README
 ================
 
-# Download Dataset
+## Download Dataset
 
 ``` r
 # Define the download URL
@@ -33,9 +33,19 @@ What are the attributes of this dataset? Below is R script code that loads the U
 #install.packages("dplyr")   # For data manipulation
 #install.packages("knitr")   # For creating a table
 #install.packages("kableExtra") # For formatting tables
-
-
+#install.packages("scales") 
+library(scales)
 library(readr)
+```
+
+    ## 
+    ## Attaching package: 'readr'
+
+    ## The following object is masked from 'package:scales':
+    ## 
+    ##     col_factor
+
+``` r
 library(dplyr)
 ```
 
@@ -134,7 +144,6 @@ data_dictionary <- tibble::tibble(
                   "Median number of bedrooms in houses in the area.",
                   "Population of the area.")
 )
-
 # Print the data dictionary as a formatted table
 data_dictionary %>%
   kable("pipe") %>%
@@ -661,4 +670,47 @@ print(missing_values)
     ##          city      statezip       country 
     ##             0             0             0
 
-Thankfully this dataset has no missing values in any of the variables as shown above.
+Thankfully this dataset has no missing values in any of the variables as shown above. If there were any missing values or empty values, some strategies that we could do would be to fill in the missing values with the median for that variable and then conduct a sensitivity analysis.
+
+## Visualizations
+
+From the code below we will be able to see a histogram of the House Prices.
+
+``` r
+ggplot(dataset, aes(x = `price`)) +
+  geom_histogram(bins = 50, fill = "blue", color = "black", alpha = 0.7) +
+  scale_x_log10(labels = scales::comma) +  # Log scale with readable numbers
+  labs(title = "Distribution of House Prices (Log Scale)", 
+       x = "Price (USD, Log Scale)", y = "Count") +
+  theme_minimal()
+```
+
+    ## Warning in scale_x_log10(labels = scales::comma): log-10 transformation
+    ## introduced infinite values.
+
+    ## Warning: Removed 49 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
+
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- --> As with most datasets we can see that there are outliers Next we can look at a bar plot of the number of houses by the amount of the bedrooms they have.
+
+``` r
+ggplot(dataset, aes(x = as.factor(`bedrooms`))) +
+  geom_bar(fill = "purple", alpha = 0.7) +
+  labs(title = "Number of Houses by Bedroom Count", x = "Number of Bedrooms", y = "Count") +
+  theme_minimal()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> Analysis. Finally we can look at a scatter plot for the sale price of the house vs the total area of square foot living space.
+
+``` r
+ggplot(dataset, aes(x = `sqft_living`, y = `price`)) +
+  geom_point(alpha = 0.5, color = "blue") +
+  scale_x_continuous(labels = scales::comma) +  # Format x-axis
+  scale_y_continuous(labels = scales::comma) +  # Format y-axis
+  labs(title = "House Price vs. Living Area", 
+       x = "Living Area (sqft)", 
+       y = "Price (USD)") +
+  theme_minimal()
+```
+
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> Analysis
