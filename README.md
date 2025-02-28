@@ -641,6 +641,8 @@ print(mode_values)
     ## $yr_renovated
     ## [1] 0
 
+## Missing Values
+
 Next we need to identify any missing or empty values. The code below will allow us to identify the values.
 
 ``` r
@@ -658,3 +660,5 @@ print(missing_values)
     ##             0             0             0             0             0 
     ##          city      statezip       country 
     ##             0             0             0
+
+Thankfully this dataset has no missing values in any of the variables as shown above.

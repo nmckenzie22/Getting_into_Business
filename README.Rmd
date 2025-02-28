@@ -10,7 +10,7 @@ always_allow_html: true
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Download Dataset
+## Download Dataset
 ```{r}
 # Define the download URL
 kaggle_url <- "https://www.kaggle.com/api/v1/datasets/download/fratzcan/usa-house-prices"
@@ -98,7 +98,7 @@ data_dictionary %>%
 ```
 
 Now we can take a further look at the data to gain initial insights and have an overview of the statistics. 
-We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset. s
+We can do this by performing a basic Exploratory Data Analysis (EDA). The code below will display the summary statistics from the dataset.
 
 ```{r}
 # Install required packages (if not already installed)
@@ -135,6 +135,7 @@ mode_values <- sapply(numeric_cols, get_mode)
 print(mode_values)
 ```
 
+## Missing Values
 Next we need to identify any missing or empty values. The code below will allow us to identify the values. 
 
 ```{r}
@@ -142,6 +143,17 @@ Next we need to identify any missing or empty values. The code below will allow 
 missing_values <- colSums(is.na(dataset))
 # Print missing values summary
 print(missing_values)
+```
+Thankfully this dataset has no missing values in any of the variables as shown above. If there were any missing values or empty values, some strategies that we could do would be to fill in the missing values with the median for that variable and then conduct a sensitivity analysis. 
+
+## Visualizations
+
+From the code below we will be able to see a histogram of the House Prices. 
+```{r}
+ggplot(dataset, aes(x = `price`)) +  # Ensure correct column name
+  geom_histogram(bins = 50, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of House Prices", x = "Price (USD)", y = "Count") +
+  theme_minimal()
 ```
 
 
