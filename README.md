@@ -24,11 +24,21 @@ list.files("~/Downloads/usa-house-prices")
 
 ## Understanding the Data
 
-When was the data acquired? Where was the data acquired?
+##### When was the data acquired?
 
-How was the data acquired?
+This data was gathered over the period from 2014-05-02 to 2014-07-10. It was uploaded on to Kaggle July 21, 2024 and most recently updated in September, 2024. The data was accessed from Kaggle on February 13, 2025.
 
-What are the attributes of this dataset? Below is R script code that loads the USA Housing Dataset and creates a data dictionary table based on the descriptions provided on Kaggle.
+#### Where was the data acquired?
+
+The data used in this report was accessed via Kaggle.com. The Kaggle link was uploaded via the Moodle.com platform at a small liberal arts college.
+
+#### How was the data acquired?
+
+The data was collected and uploaded via the Kaggle.com user Firat Ozcan. It extracts data from the USA housing market and extrapolates it to Kaggle.com via a .csv file. Kaggle is a data science platform and online community for data scientists and machine learning practitioners under Google LLC.
+
+#### What are the attributes of this dataset?
+
+The features of the dataset are displayed on the data card in kaggle.com. There are 18 features (Date, price, bedrooms, bathrooms, sqft living, sqf loft, floors, waterfront, view, conditons, sqft above, sqft basement, year built, year renovated, street, city, statezip, country) that will be analyzed. Below is R script code that loads the USA Housing Dataset and creates a data dictionary table based on the descriptions provided on Kaggle.
 
 ``` r
 #install.packages("readr")   # For reading CSV files
@@ -433,7 +443,6 @@ library(skimr)
 library(modeest)
 library(scales)  # New package to format numbers
 library(knitr)
-
 # Load the dataset (update the path if needed)
 dataset <- read_csv("~/Downloads/USA_Housing_Dataset.csv")
 ```
@@ -500,7 +509,6 @@ str(dataset)
 summary_stats <- summary(dataset)
 # Format numeric values to remove scientific notation
 formatted_summary <- as.data.frame(summary_stats) %>% mutate_all(~ format(., big.mark = ",", scientific = FALSE))
-
 # Print formatted summary statistics as a Markdown table
 kable(formatted_summary, caption = "Summary Statistics for Dataset", format = "markdown")
 ```
@@ -621,7 +629,6 @@ Summary Statistics for Dataset
 ``` r
 # Additional summary statistics using skimr (without scientific notation)
 skimmed_data <- skim(dataset)
-
 # Function to remove scientific notation in skimr output
 format_skim <- function(x) {
   if (is.numeric(x)) {
@@ -630,11 +637,9 @@ format_skim <- function(x) {
     return(x)
   }
 }
-
 # Apply formatting
 skimmed_data <- skimmed_data %>%
   mutate(across(where(is.numeric), format_skim))
-
 # Print formatted skimmed statistics as a Markdown table
 kable(skimmed_data, caption = "Skim Summary Statistics for Dataset", format = "markdown")
 ```
@@ -668,14 +673,11 @@ get_median <- function(x) {
   median_value <- median(x, na.rm = TRUE)  # Calculate median, ignoring NAs
   return(median_value)
 }
-
 # Calculate median for numeric columns
 numeric_cols <- dataset %>% select(where(is.numeric))
 median_values <- sapply(numeric_cols, get_median)
-
 # Format median values without scientific notation
 median_values <- format(median_values, big.mark = ",", scientific = FALSE)
-
 # Print formatted median values as a Markdown table
 kable(as.data.frame(median_values), caption = "Median Values for Numeric Columns", format = "markdown")
 ```
@@ -697,6 +699,8 @@ kable(as.data.frame(median_values), caption = "Median Values for Numeric Columns
 | yr_renovated  | 0.00          |
 
 Median Values for Numeric Columns
+
+From the summary statistics there are several key things to point out. The price ranges from a very low value to a high value, which indicates a large variance in property prices. This suggests that the dataset includes properties from different price ranges, including both affordable and luxury properties. The waterfront and view variables are binary variables, where 0 represents no view/waterfront, and 1 represents a property with a view/waterfront. The median for sqft_living and sqft_lot will give a clearer idea of the typical property size, as these variables can often be skewed by very large properties. The condition variable has a range from 1 (poor) to 5 (excellent), reflecting the quality or upkeep of the property. The median should indicate the typical condition of properties in the dataset. If the median is low, it may suggest that many properties are in poor condition or require renovation.The median values for bedrooms and bathrooms will help us understand the typical property configuration. If the median is much lower than the mean, it may suggest the presence of multi-bedroom properties that significantly skew the data.
 
 ## Missing Values
 
