@@ -210,5 +210,12 @@ ggplot(dataset, aes(x = `sqft_living`, y = `price`)) +
 ```
 The scatter plot mostly aligns with the trend seen across all graphs that as the number of bedrooms and the total living area increases, so does the houses price. There is two clear outliers that we can see from this graph however. These isolated points far from the cluster of most data indicate potential anomalies. Typically, these high-priced small homes are due to unique factors (e.g., location, luxury features). A NYC penthouse is going to be worth a lot more than a ranch in Jersey, even though it will be significantly smaller. There is no need to  remove these cases as they do not skew statistical models. 
 
+## Additional Datasets
+It’s important to gather supplementary data that can provide a more holistic view of the market. While the current dataset offers detailed information about individual properties (such as price, size, condition, and location), there are other key factors to consider when making real estate investments, such as economic conditions, trends in demand, and even neighborhood-level factors that could influence property values. 
 
+One valuable dataset to complement this analysis is "U.S. Housing Market Factors" from Kaggle.com, which provides information on housing market trends, such as Macroeconomic factors (takes into account GDP, inflation, Stock indexes, UE rate, population, etc.), and Microeconomic factors (such as house type, age, location, size, facilities, disability functions, region, house prices, etc.). 
+
+This dataset could be extremely useful for market forecasting to help predict where future opportunities might lie, help assess which markets are currently undervalued or overpriced, and give insights into potential rental income and profitability. It complements the current dataset by giving additional rental analysis and trend analysis. By combining both it can help assess potential rental income based on location and property type as well as help make clear how individual properties fit into the larger market picture.
+
+Additional Dataset Link: https://www.kaggle.com/datasets/faryarmemon/usa-housing-market-factors 
 
