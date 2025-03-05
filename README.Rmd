@@ -157,6 +157,22 @@ median_values <- sapply(numeric_cols, get_median)
 median_values <- format(median_values, big.mark = ",", scientific = FALSE)
 # Print formatted median values as a Markdown table
 kable(as.data.frame(median_values), caption = "Median Values for Numeric Columns", format = "markdown")
+# --- NEW: Summary for Nominal (Categorical) Data ---
+# Identify categorical columns
+categorical_cols <- dataset %>% select(where(is.character))
+# Function to get frequency table for top 5 categories
+get_top_categories <- function(col) {
+  freq_table <- sort(table(col), decreasing = TRUE) %>% head(5)  # Get top 5
+  return(as.data.frame(freq_table))
+}
+# Apply function to each categorical column
+category_summaries <- lapply(categorical_cols, get_top_categories)
+# Print frequency tables for each categorical variable
+for (col_name in names(category_summaries)) {
+  cat("\n### Top 5 Categories for", col_name, "\n")
+  print(kable(category_summaries[[col_name]], caption = paste("Top 5 Categories in", col_name), format = "markdown"))
+}
+
 ```
 
 From the summary statistics there are several key things to point out. The price ranges from a very low value to a high value, which indicates a large variance in property prices. This suggests that the dataset includes properties from different price ranges, including both affordable and luxury properties. The waterfront and view variables are  binary variables, where 0 represents no view/waterfront, and 1 represents a property with a view/waterfront. The median for sqft_living and sqft_lot will give a clearer idea of the typical property size, as these variables can often be skewed by very large properties. The condition variable has a range from 1 (poor) to 5 (excellent), reflecting the quality or upkeep of the property. The median should indicate the typical condition of properties in the dataset. If the median is low, it may suggest that many properties are in poor condition or require renovation.The median values for bedrooms and bathrooms will help us understand the typical property configuration. If the median is much lower than the mean, it may suggest the presence of multi-bedroom properties that significantly skew the data.

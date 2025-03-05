@@ -700,6 +700,73 @@ kable(as.data.frame(median_values), caption = "Median Values for Numeric Columns
 
 Median Values for Numeric Columns
 
+``` r
+# --- NEW: Summary for Nominal (Categorical) Data ---
+# Identify categorical columns
+categorical_cols <- dataset %>% select(where(is.character))
+# Function to get frequency table for top 5 categories
+get_top_categories <- function(col) {
+  freq_table <- sort(table(col), decreasing = TRUE) %>% head(5)  # Get top 5
+  return(as.data.frame(freq_table))
+}
+# Apply function to each categorical column
+category_summaries <- lapply(categorical_cols, get_top_categories)
+# Print frequency tables for each categorical variable
+for (col_name in names(category_summaries)) {
+  cat("\n### Top 5 Categories for", col_name, "\n")
+  print(kable(category_summaries[[col_name]], caption = paste("Top 5 Categories in", col_name), format = "markdown"))
+}
+```
+
+    ## 
+    ## ### Top 5 Categories for street 
+    ## 
+    ## 
+    ## Table: Top 5 Categories in street
+    ## 
+    ## |col                   | Freq|
+    ## |:---------------------|----:|
+    ## |2520 Mulberry Walk NE |    4|
+    ## |2500 Mulberry Walk NE |    3|
+    ## |1018 NE 96th St       |    2|
+    ## |106 24th Ave E        |    2|
+    ## |11034 NE 26th Pl      |    2|
+    ## 
+    ## ### Top 5 Categories for city 
+    ## 
+    ## 
+    ## Table: Top 5 Categories in city
+    ## 
+    ## |col      | Freq|
+    ## |:--------|----:|
+    ## |Seattle  | 1415|
+    ## |Renton   |  261|
+    ## |Bellevue |  260|
+    ## |Redmond  |  209|
+    ## |Kent     |  167|
+    ## 
+    ## ### Top 5 Categories for statezip 
+    ## 
+    ## 
+    ## Table: Top 5 Categories in statezip
+    ## 
+    ## |col      | Freq|
+    ## |:--------|----:|
+    ## |WA 98103 |  128|
+    ## |WA 98052 |  120|
+    ## |WA 98117 |  119|
+    ## |WA 98115 |  114|
+    ## |WA 98006 |  101|
+    ## 
+    ## ### Top 5 Categories for country 
+    ## 
+    ## 
+    ## Table: Top 5 Categories in country
+    ## 
+    ## |    | freq_table|
+    ## |:---|----------:|
+    ## |USA |       4140|
+
 From the summary statistics there are several key things to point out. The price ranges from a very low value to a high value, which indicates a large variance in property prices. This suggests that the dataset includes properties from different price ranges, including both affordable and luxury properties. The waterfront and view variables are binary variables, where 0 represents no view/waterfront, and 1 represents a property with a view/waterfront. The median for sqft_living and sqft_lot will give a clearer idea of the typical property size, as these variables can often be skewed by very large properties. The condition variable has a range from 1 (poor) to 5 (excellent), reflecting the quality or upkeep of the property. The median should indicate the typical condition of properties in the dataset. If the median is low, it may suggest that many properties are in poor condition or require renovation.The median values for bedrooms and bathrooms will help us understand the typical property configuration. If the median is much lower than the mean, it may suggest the presence of multi-bedroom properties that significantly skew the data.
 
 ## Missing Values
